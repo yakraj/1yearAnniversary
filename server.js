@@ -1,13 +1,7 @@
 const express = require("express");
 const path = require("path");
-const cors = require("cors");
-const os = require("os");
 
 const app = express();
-const port = 3006;
-
-// Enable CORS
-app.use(cors());
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -29,24 +23,6 @@ function isUniqueVisitor(ip) {
 
   return !recentVisit;
 }
-
-// Middleware to log visitors
-app.use((req, res, next) => {
-  const ip = req.ip || req.connection.remoteAddress;
-  visitors.push({
-    ip,
-    timestamp: new Date().toISOString(),
-  });
-  next();
-});
-
-// Serve static files from the current directory
-app.use(express.static(__dirname));
-
-// Serve the main HTML file
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
 
 // API endpoint for images
 app.get("/api/images", (req, res) => {
@@ -126,46 +102,6 @@ app.get("/api/locations", (req, res) => {
 app.get("/api/permission-denials", (req, res) => {
   res.json(permissionDenials);
 });
-
-// Route for terms page
-app.get("/terms", (req, res) => {
-  res.sendFile(path.join(__dirname, "terms.html"));
-});
-
-// Route for admin page
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin.html"));
-});
-
-// Get local IP address
-function getLocalIP() {
-  const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    for (const iface of interfaces[name]) {
-      // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-      if (iface.family === "IPv4" && !iface.internal) {
-        return iface.address;
-      }
-    }
-  }
-  return "localhost";
-}
-
-const localIP = getLocalIP();
-
-// Handle all other routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-// For local development
-if (process.env.NODE_ENV !== "production") {
-  app.listen(port, "0.0.0.0", () => {
-    console.log(`Server running at:`);
-    console.log(`- Local:   http://localhost:${port}`);
-    console.log(`- Network: http://${localIP}:${port}`);
-  });
-}
 
 // Export the Express API
 module.exports = app;
