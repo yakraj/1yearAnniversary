@@ -1,10 +1,16 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
 
+// Enable CORS for all routes
+app.use(cors());
+
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// This comment is added to force a Vercel redeploy.
 
 // Store visitor and location data (Note: In production, use a database instead)
 let visitors = [];
