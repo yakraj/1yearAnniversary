@@ -20,6 +20,10 @@
       "dest": "/admin.html"
     },
     {
+      "src": "/test.txt",
+      "dest": "/test.txt"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
