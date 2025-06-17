@@ -10,8 +10,6 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// This comment is added to force a Vercel redeploy.
-
 // Store visitor and location data (Note: In production, use a database instead)
 let visitors = [];
 let locations = [];
@@ -29,14 +27,6 @@ function isUniqueVisitor(ip) {
 
   return !recentVisit;
 }
-
-// Serve static files from the current directory
-app.use(express.static(path.join(__dirname)));
-
-// Serve the main HTML file
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
 
 // API endpoint for images
 app.get("/api/images", (req, res) => {
@@ -116,29 +106,6 @@ app.get("/api/locations", (req, res) => {
 app.get("/api/permission-denials", (req, res) => {
   res.json(permissionDenials);
 });
-
-// Route for terms page
-app.get("/terms", (req, res) => {
-  res.sendFile(path.join(__dirname, "terms.html"));
-});
-
-// Route for admin page
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin.html"));
-});
-
-// Handle all other routes by serving index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-// For local development, start the server
-if (process.env.NODE_ENV !== "production") {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running locally at http://localhost:${port}`);
-  });
-}
 
 // Export the Express API for Vercel
 module.exports = app;
