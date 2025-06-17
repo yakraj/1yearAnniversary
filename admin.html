@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .tab-button.active {
+        @apply bg-blue-600 text-white;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-6 text-center">
+        Admin Dashboard
+      </h1>
+
+      <!-- Tab Navigation -->
+      <div class="flex justify-center mb-6">
+        <button
+          id="dashboardTabBtn"
+          class="tab-button active px-6 py-3 rounded-l-lg text-lg font-semibold text-blue-800 bg-white shadow hover:bg-blue-100 transition duration-300"
+        >
+          Dashboard
+        </button>
+        <button
+          id="analyticsTabBtn"
+          class="tab-button px-6 py-3 rounded-r-lg text-lg font-semibold text-blue-800 bg-white shadow hover:bg-blue-100 transition duration-300"
+        >
+          Analytics
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div
+        id="dashboardContent"
+        class="tab-content active bg-white p-8 rounded-lg shadow-xl"
+      >
+        <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-3">
+          Recent Activity Overview
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Visitors Section -->
+          <div>
+            <h3
+              class="text-xl font-semibold text-gray-600 mb-4 flex items-center"
+            >
+              <svg
+                class="w-6 h-6 mr-2 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-3-3H5a3 3 0 00-3 3v2h5m0-9V4a2 2 0 012-2h2a2 2 0 012 2v11m0-11l-3 3m-3-3L9 3"
+                ></path>
+              </svg>
+              Recent Visitors
+            </h3>
+            <div
+              id="visitorsList"
+              class="space-y-3 max-h-96 overflow-y-auto pr-2"
+            >
+              <!-- Visitors will be populated here -->
+            </div>
+          </div>
+
+          <!-- Location Data Section -->
+          <div>
+            <h3
+              class="text-xl font-semibold text-gray-600 mb-4 flex items-center"
+            >
+              <svg
+                class="w-6 h-6 mr-2 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17.657 16.727A8 8 0 016.343 7.273L16.727 17.657z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6.343 16.727L16.727 7.273A8 8 0 006.343 16.727z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 18h.01M12 6h.01"
+                ></path>
+              </svg>
+              Latest Location Data
+            </h3>
+            <div
+              id="locationList"
+              class="space-y-3 max-h-96 overflow-y-auto pr-2"
+            >
+              <!-- Location data will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="analyticsContent"
+        class="tab-content bg-white p-8 rounded-lg shadow-xl"
+      >
+        <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-3">
+          Data Analytics
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div
+            class="bg-blue-50 p-6 rounded-lg shadow-md flex items-center justify-between"
+          >
+            <div>
+              <p class="text-sm text-blue-700">Total Visitors</p>
+              <p id="totalVisitors" class="text-3xl font-bold text-blue-900">
+                0
+              </p>
+            </div>
+            <svg
+              class="w-12 h-12 text-blue-400"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M17 20h5v-2a3 3 0 00-3-3H5a3 3 0 00-3 3v2h5m0-9V4a2 2 0 012-2h2a2 2 0 012 2v11m0-11l-3 3m-3-3L9 3"
+              ></path>
+            </svg>
+          </div>
+          <div
+            class="bg-green-50 p-6 rounded-lg shadow-md flex items-center justify-between"
+          >
+            <div>
+              <p class="text-sm text-green-700">Unique Visitors</p>
+              <p id="uniqueVisitors" class="text-3xl font-bold text-green-900">
+                0
+              </p>
+            </div>
+            <svg
+              class="w-12 h-12 text-green-400"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              ></path>
+            </svg>
+          </div>
+          <div
+            class="bg-yellow-50 p-6 rounded-lg shadow-md flex items-center justify-between"
+          >
+            <div>
+              <p class="text-sm text-yellow-700">Location Submissions</p>
+              <p id="totalLocations" class="text-3xl font-bold text-yellow-900">
+                0
+              </p>
+            </div>
+            <svg
+              class="w-12 h-12 text-yellow-400"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Top 5 Most Active IPs (Visitors) -->
+          <div>
+            <h3
+              class="text-xl font-semibold text-gray-600 mb-4 flex items-center"
+            >
+              <svg
+                class="w-6 h-6 mr-2 text-purple-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.75 17L9.75 14L22 14L22 17L9.75 17Z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M2.5 2L10 9L17.5 2"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 10L12 15L7 10"
+                ></path>
+              </svg>
+              Top 5 Most Active Visitor IPs
+            </h3>
+            <div
+              id="topVisitorIPs"
+              class="bg-gray-50 p-4 rounded-lg shadow-inner space-y-2"
+            >
+              <!-- Top IPs will be populated here -->
+            </div>
+          </div>
+
+          <!-- Top 5 Most Active IPs (Locations) -->
+          <div>
+            <h3
+              class="text-xl font-semibold text-gray-600 mb-4 flex items-center"
+            >
+              <svg
+                class="w-6 h-6 mr-2 text-orange-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8c-1.657 0-3 1.343-3 3v5.999c0 1.105.895 2 2 2h2c1.105 0 2-.895 2-2V11c0-1.657-1.343-3-3-3z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 13c-2.761 0-5 2.239-5 5v3"
+                ></path>
+              </svg>
+              Top 5 Most Active Location IPs
+            </h3>
+            <div
+              id="topLocationIPs"
+              class="bg-gray-50 p-4 rounded-lg shadow-inner space-y-2"
+            >
+              <!-- Top IPs will be populated here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- New Section for Permission Denials -->
+        <div class="mt-8">
+          <h3
+            class="text-xl font-semibold text-gray-600 mb-4 flex items-center"
+          >
+            <svg
+              class="w-6 h-6 mr-2 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+              ></path>
+            </svg>
+            Permission Denials
+          </h3>
+          <div
+            id="permissionDenialsList"
+            class="bg-gray-50 p-4 rounded-lg shadow-inner space-y-2 max-h-96 overflow-y-auto pr-2"
+          >
+            <!-- Permission denials will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const dashboardTabBtn = document.getElementById("dashboardTabBtn");
+      const analyticsTabBtn = document.getElementById("analyticsTabBtn");
+      const dashboardContent = document.getElementById("dashboardContent");
+      const analyticsContent = document.getElementById("analyticsContent");
+
+      function switchTab(tabName) {
+        dashboardTabBtn.classList.remove("active");
+        analyticsTabBtn.classList.remove("active");
+        dashboardContent.classList.remove("active");
+        analyticsContent.classList.remove("active");
+
+        if (tabName === "dashboard") {
+          dashboardTabBtn.classList.add("active");
+          dashboardContent.classList.add("active");
+        } else if (tabName === "analytics") {
+          analyticsTabBtn.classList.add("active");
+          analyticsContent.classList.add("active");
+          fetchAnalytics(); // Fetch analytics data when switching to this tab
+        }
+      }
+
+      dashboardTabBtn.addEventListener("click", () => switchTab("dashboard"));
+      analyticsTabBtn.addEventListener("click", () => switchTab("analytics"));
+
+      // Function to fetch and display visitors for Dashboard tab
+      async function fetchVisitors() {
+        try {
+          const response = await fetch("/api/visitors");
+          const visitors = await response.json();
+          const visitorsList = document.getElementById("visitorsList");
+
+          visitorsList.innerHTML = visitors
+            .map(
+              (visitor) => `
+            <div class="border-b border-gray-200 pb-2 mb-2 last:border-b-0 last:mb-0">
+              <p class="font-medium text-gray-700">IP: <span class="font-normal">${
+                visitor.ip
+              }</span></p>
+              <p class="text-sm text-gray-500">Time: ${new Date(
+                visitor.timestamp
+              ).toLocaleString()}</p>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error fetching visitors:", error);
+        }
+      }
+
+      // Function to fetch and display location data for Dashboard tab
+      async function fetchLocationData() {
+        try {
+          const response = await fetch("/api/locations");
+          const locations = await response.json();
+          const locationList = document.getElementById("locationList");
+
+          locationList.innerHTML = locations
+            .map(
+              (location) => `
+            <div class="border-b border-gray-200 pb-2 mb-2 last:border-b-0 last:mb-0">
+              <p class="font-medium text-gray-700">IP: <span class="font-normal">${
+                location.ip
+              }</span></p>
+              <p class="text-sm text-gray-600">Lat: <span class="font-normal">${
+                location.latitude
+              }</span>, Long: <span class="font-normal">${
+                location.longitude
+              }</span></p>
+              <p class="text-sm text-gray-500">Time: ${new Date(
+                location.timestamp
+              ).toLocaleString()}</p>
+              <a href="https://www.google.com/maps?q=${location.latitude},${
+                location.longitude
+              }" 
+                 target="_blank" 
+                 class="inline-flex items-center mt-2 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition duration-300">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg>
+                View on Map
+              </a>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error fetching location data:", error);
+        }
+      }
+
+      // Function to fetch and display analytics
+      async function fetchAnalytics() {
+        try {
+          const visitorsResponse = await fetch("/api/visitors");
+          const visitors = await visitorsResponse.json();
+
+          const locationsResponse = await fetch("/api/locations");
+          const locations = await locationsResponse.json();
+
+          // Total Visitors
+          document.getElementById("totalVisitors").textContent =
+            visitors.length;
+
+          // Unique Visitors
+          const uniqueVisitorIPs = new Set(visitors.map((v) => v.ip));
+          document.getElementById("uniqueVisitors").textContent =
+            uniqueVisitorIPs.size;
+
+          // Total Location Submissions
+          document.getElementById("totalLocations").textContent =
+            locations.length;
+
+          // Fetch and display Permission Denials
+          const permissionDenialsResponse = await fetch(
+            "/api/permission-denials"
+          );
+          const permissionDenials = await permissionDenialsResponse.json();
+          const permissionDenialsList = document.getElementById(
+            "permissionDenialsList"
+          );
+
+          permissionDenialsList.innerHTML = permissionDenials
+            .map(
+              (denial) => `
+            <div class="border-b border-gray-200 pb-2 mb-2 last:border-b-0 last:mb-0">
+              <p class="font-medium text-gray-700">IP: <span class="font-normal">${
+                denial.ip
+              }</span></p>
+              <p class="text-sm text-gray-500">Time: ${new Date(
+                denial.timestamp
+              ).toLocaleString()}</p>
+            </div>
+          `
+            )
+            .join("");
+
+          // Top 5 Most Active Visitor IPs
+          const visitorIpCounts = visitors.reduce((acc, v) => {
+            acc[v.ip] = (acc[v.ip] || 0) + 1;
+            return acc;
+          }, {});
+          const sortedVisitorIps = Object.entries(visitorIpCounts)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 5);
+          const topVisitorIPsDiv = document.getElementById("topVisitorIPs");
+          topVisitorIPsDiv.innerHTML = sortedVisitorIps
+            .map(
+              ([ip, count]) => `
+            <p class="text-gray-700">${ip}: <span class="font-semibold">${count} visits</span></p>
+          `
+            )
+            .join("");
+
+          // Top 5 Most Active Location IPs
+          const locationIpCounts = locations.reduce((acc, loc) => {
+            acc[loc.ip] = (acc[loc.ip] || 0) + 1;
+            return acc;
+          }, {});
+          const sortedLocationIps = Object.entries(locationIpCounts)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 5);
+          const topLocationIPsDiv = document.getElementById("topLocationIPs");
+          topLocationIPsDiv.innerHTML = sortedLocationIps
+            .map(
+              ([ip, count]) => `
+            <p class="text-gray-700">${ip}: <span class="font-semibold">${count} submissions</span></p>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error fetching analytics data:", error);
+        }
+      }
+
+      // Initial data fetch and tab display
+      fetchVisitors();
+      fetchLocationData();
+      switchTab("dashboard"); // Default to dashboard view
+
+      // Refresh data every 30 seconds for active tab
+      setInterval(() => {
+        if (dashboardContent.classList.contains("active")) {
+          fetchVisitors();
+          fetchLocationData();
+        } else if (analyticsContent.classList.contains("active")) {
+          fetchAnalytics();
+        }
+      }, 30000);
+    </script>
+  </body>
+</html>
