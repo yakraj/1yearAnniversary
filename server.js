@@ -130,13 +130,13 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// For local development, start the server
-if (process.env.NODE_ENV !== "production") {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running locally at http://localhost:${port}`);
-  });
-}
+// Get the port from environment variable or use 3000 as default
+const port = process.env.PORT || 3000;
 
-// Export the Express API for Vercel (this line is crucial for Vercel)
+// Start the server
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+// Export the Express API for Vercel
 module.exports = app;
