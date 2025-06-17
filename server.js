@@ -28,6 +28,14 @@ function isUniqueVisitor(ip) {
   return !recentVisit;
 }
 
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, "public")));
+
+// Serve the main HTML file for the root route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 // API endpoint for images
 app.get("/api/images", (req, res) => {
   // Check if request is not from admin panel
@@ -107,5 +115,28 @@ app.get("/api/permission-denials", (req, res) => {
   res.json(permissionDenials);
 });
 
-// Export the Express API for Vercel
+// Route for terms page (serve from public directory)
+app.get("/terms", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "terms.html"));
+});
+
+// Route for admin page (serve from public directory)
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
+});
+
+// Handle all other routes by serving index.html from public directory
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// For local development, start the server
+if (process.env.NODE_ENV !== "production") {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running locally at http://localhost:${port}`);
+  });
+}
+
+// Export the Express API for Vercel (this line is crucial for Vercel)
 module.exports = app;
