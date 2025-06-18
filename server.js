@@ -1,142 +1,66 @@
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
+const serverless = require("serverless-http"); // <- required wrapper for Vercel
 
 const app = express();
 
-// Enable CORS for all routes
 app.use(cors());
-
-// Middleware to parse JSON bodies
 app.use(express.json());
 
-// Store visitor and location data (Note: In production, use a database instead)
 let visitors = [];
 let locations = [];
 let permissionDenials = [];
 
-// Function to check if visitor is unique within time window
 function isUniqueVisitor(ip) {
   const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-
-  // Check if this IP has visited in the last 30 minutes
   const recentVisit = visitors.find(
     (visitor) =>
       visitor.ip === ip && new Date(visitor.timestamp) > thirtyMinutesAgo
   );
-
   return !recentVisit;
 }
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, "public")));
-
-// Serve the main HTML file for the root route
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// API endpoint for images
 app.get("/api/images", (req, res) => {
-  // Check if request is not from admin panel
   const referer = req.headers.referer || "";
   if (!referer.includes("/admin")) {
     const ip = req.ip || req.connection.remoteAddress;
-
-    // Only log if this is a unique visitor within the time window
     if (isUniqueVisitor(ip)) {
-      visitors.push({
-        ip,
-        timestamp: new Date().toISOString(),
-      });
+      visitors.push({ ip, timestamp: new Date().toISOString() });
       console.log(`New unique visitor logged: ${ip}`);
     }
   }
 
-  // Mock image data (same as in your HTML file)
-  const images = [
-    "https://res.cloudinary.com/wows/image/upload/v1750207667/vha50d4lhrunsninmzdi.jpg",
-    "https://res.cloudinary.com/wows/image/upload/v1750207667/o1mlrgmyl8fmdeecpug1.jpg",
-    "https://res.cloudinary.com/wows/image/upload/v1750207667/rhluroa63powunftqeqf.jpg",
-    "https://res.cloudinary.com/wows/image/upload/v1750207667/bzr1jdcvvihleagvb7tk.jpg",
-    "https://res.cloudinary.com/wows/image/upload/v1750207667/ikl0orfureiwwkvymhpt.jpg",
-    "https://placehold.co/750x550/FFA033/000000?text=Image+6",
-    "https://placehold.co/850x650/33FFAB/FFFFFF?text=Image+7",
-    "https://placehold.co/650x750/AB33FF/000000?text=Image+8",
-    "https://placehold.co/950x750/33A0FF/FFFFFF?text=Image+9",
-    "https://placehold.co/700x900/FF3357/000000?text=Image+10",
-    "https://placehold.co/800x600/FF5733/FFFFFF?text=Image+11",
-    "https://placehold.co/900x700/33FF57/000000?text=Image+12",
-    "https://placehold.co/700x500/5733FF/FFFFFF?text=Image+13",
-    "https://placehold.co/1000x800/33A0FF/000000?text=Image+14",
-    "https://placehold.co/600x900/FF33A0/FFFFFF?text=Image+15",
-    "https://placehold.co/750x550/FFA033/000000?text=Image+16",
-  ];
+  const images = [/* your images here */];
   res.json(images);
 });
 
-// API endpoint for location data
 app.post("/api/location", (req, res) => {
   const { latitude, longitude } = req.body;
   const ip = req.ip || req.connection.remoteAddress;
 
-  locations.push({
-    ip,
-    latitude,
-    longitude,
-    timestamp: new Date().toISOString(),
-  });
+  locations.push({ ip, latitude, longitude, timestamp: new Date().toISOString() });
 
   res.json({ success: true });
 });
 
-// API endpoint to store permission denials
 app.post("/api/permission-denial", (req, res) => {
   const ip = req.ip || req.connection.remoteAddress;
-  permissionDenials.push({
-    ip,
-    timestamp: new Date().toISOString(),
-  });
+  permissionDenials.push({ ip, timestamp: new Date().toISOString() });
   res.json({ success: true });
 });
 
-// API endpoint to get visitors
 app.get("/api/visitors", (req, res) => {
   res.json(visitors);
 });
 
-// API endpoint to get locations
 app.get("/api/locations", (req, res) => {
   res.json(locations);
 });
 
-// API endpoint to get permission denials
 app.get("/api/permission-denials", (req, res) => {
   res.json(permissionDenials);
 });
 
-// Route for terms page (serve from public directory)
-app.get("/terms", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "terms.html"));
-});
-
-// Route for admin page (serve from public directory)
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "admin.html"));
-});
-
-// Handle all other routes by serving index.html from public directory
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// Get the port from environment variable or use 3000 as default
-const port = process.env.PORT || 3000;
-
-// Start the server
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server is running on port ${port}`);
-});
-
-// Export the Express API for Vercel
-module.exports = app;
+// Wrap and export the app for Vercel
+module.exports = serverless(app);
