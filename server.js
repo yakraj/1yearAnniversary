@@ -55,11 +55,11 @@ app.get("/api/images", (req, res) => {
 
   // Mock image data (same as in your HTML file)
   const images = [
-    "https://placehold.co/800x600/FF5733/FFFFFF?text=Image+1",
-    "https://placehold.co/900x700/33FF57/000000?text=Image+2",
-    "https://placehold.co/700x500/5733FF/FFFFFF?text=Image+3",
-    "https://placehold.co/1000x800/33A0FF/000000?text=Image+4",
-    "https://placehold.co/600x900/FF33A0/FFFFFF?text=Image+5",
+    "https://res.cloudinary.com/wows/image/upload/v1750207667/vha50d4lhrunsninmzdi.jpg",
+    "https://res.cloudinary.com/wows/image/upload/v1750207667/o1mlrgmyl8fmdeecpug1.jpg",
+    "https://res.cloudinary.com/wows/image/upload/v1750207667/rhluroa63powunftqeqf.jpg",
+    "https://res.cloudinary.com/wows/image/upload/v1750207667/bzr1jdcvvihleagvb7tk.jpg",
+    "https://res.cloudinary.com/wows/image/upload/v1750207667/ikl0orfureiwwkvymhpt.jpg",
     "https://placehold.co/750x550/FFA033/000000?text=Image+6",
     "https://placehold.co/850x650/33FFAB/FFFFFF?text=Image+7",
     "https://placehold.co/650x750/AB33FF/000000?text=Image+8",
