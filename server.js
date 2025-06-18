@@ -1,10 +1,9 @@
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const serverless = require("serverless-http"); // <- required wrapper for Vercel
+const serverless = require("serverless-http"); // <- important
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
@@ -14,12 +13,17 @@ let permissionDenials = [];
 
 function isUniqueVisitor(ip) {
   const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-  const recentVisit = visitors.find(
-    (visitor) =>
-      visitor.ip === ip && new Date(visitor.timestamp) > thirtyMinutesAgo
+  return !visitors.find(
+    (v) => v.ip === ip && new Date(v.timestamp) > thirtyMinutesAgo
   );
-  return !recentVisit;
 }
+
+// Static files (won’t work the same on Vercel; see note below)
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 app.get("/api/images", (req, res) => {
   const referer = req.headers.referer || "";
@@ -31,7 +35,7 @@ app.get("/api/images", (req, res) => {
     }
   }
 
-  const images = [/* your images here */];
+  const images = [/* same image array as before */];
   res.json(images);
 });
 
@@ -40,7 +44,6 @@ app.post("/api/location", (req, res) => {
   const ip = req.ip || req.connection.remoteAddress;
 
   locations.push({ ip, latitude, longitude, timestamp: new Date().toISOString() });
-
   res.json({ success: true });
 });
 
@@ -50,17 +53,22 @@ app.post("/api/permission-denial", (req, res) => {
   res.json({ success: true });
 });
 
-app.get("/api/visitors", (req, res) => {
-  res.json(visitors);
+app.get("/api/visitors", (req, res) => res.json(visitors));
+app.get("/api/locations", (req, res) => res.json(locations));
+app.get("/api/permission-denials", (req, res) => res.json(permissionDenials));
+
+app.get("/terms", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "terms.html"));
 });
 
-app.get("/api/locations", (req, res) => {
-  res.json(locations);
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
-app.get("/api/permission-denials", (req, res) => {
-  res.json(permissionDenials);
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Wrap and export the app for Vercel
+// DO NOT call app.listen()
+// Export the handler for Vercel
 module.exports = serverless(app);
